@@ -20,5 +20,10 @@ brew "wget"
 brew "zellij"
 
 # Installed but absent from `brew leaves`, so add them by hand.
+#
+# Homebrew now requires tap trust. mongodb/brew is a third-party tap, so on a
+# rebuilt machine these two are silently IGNORED by `brew bundle` until trusted.
+# Prefer the narrow form over trusting the whole tap:
+#   brew trust --formula mongodb/brew/mongodb-community@7.0 mongodb/brew/mongodb-database-tools
 brew "mongodb/brew/mongodb-community@7.0"
 brew "mongodb/brew/mongodb-database-tools"
