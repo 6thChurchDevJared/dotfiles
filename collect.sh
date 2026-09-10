@@ -59,8 +59,17 @@ if [ -d "$HOME/.config/nvim" ] && [ ! -L "$HOME/.config/nvim" ]; then
 fi
 
 # Installed packages, so the other machine can see what it is missing.
-brew leaves > "$DOTFILES/inventory/$(scutil --get ComputerName 2>/dev/null || hostname)-leaves.txt" 2>/dev/null || true
-ls "$HOME/Library/Application Support/Zed/extensions/installed" \
-   > "$DOTFILES/inventory/$(scutil --get ComputerName 2>/dev/null || hostname)-zed-extensions.txt" 2>/dev/null || true
+M="$(scutil --get ComputerName 2>/dev/null || hostname)"
+brew leaves > "$DOTFILES/inventory/$M-leaves.txt" 2>/dev/null || true
+/bin/ls "$HOME/Library/Application Support/Zed/extensions/installed" \
+   > "$DOTFILES/inventory/$M-zed-extensions.txt" 2>/dev/null || true
+
+# Shell files are NOT linked into shell/ — they are machine-mixed and would
+# clobber the other machine's toolchain. They land in inventory/ so the shared
+# parts can be lifted into common.zsh by hand. This is how the Mini's atuin,
+# mise and starship init were found to be missing.
+for f in .zshrc .zshrc.local .zprofile .zshenv; do
+  [ -f "$HOME/$f" ] && cp "$HOME/$f" "$DOTFILES/inventory/$M$f.txt"
+done
 
 echo; echo "now: git -C '$DOTFILES' diff"

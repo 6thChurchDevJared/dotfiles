@@ -88,3 +88,32 @@ cursor-style = block
 cursor-style-blink = false
 mouse-hide-while-typing = true
 copy-on-select = clipboard
+
+
+# ── Function ─────────────────────────────────────────────────
+# Appended when the Mac Mini's "glass" config was adopted. The block
+# above is the Mini's and wins on everything visual. These are fixes
+# and bindings, not preferences, so they are shared. Ghostty takes the
+# last value for single-value keys, so this section overrides above.
+
+# Fix Claude Code / TUI text overlap & ghosting on Ghostty 1.3+.
+# Ghostty's default `unicode` width method desyncs the cursor against
+# apps that measure with wcswidth (Claude Code's Ink renderer). `legacy`
+# uses POSIX wcswidth tables and aligns the two. Do not remove: this was
+# diagnosed the hard way, and starship was the red herring.
+grapheme-width-method = legacy
+
+# Claude Code: Shift+Enter inserts a newline instead of submitting.
+keybind = shift+enter=text:\n
+
+# Splits
+keybind = cmd+d=new_split:right
+keybind = cmd+shift+d=new_split:down
+keybind = cmd+w=close_surface
+
+# Shell integration: cursor shape, sudo askpass, window title.
+shell-integration = zsh
+shell-integration-features = cursor,sudo,title
+
+# macOS: make Option send Meta (readline word-jump, alt keybinds).
+macos-option-as-alt = true

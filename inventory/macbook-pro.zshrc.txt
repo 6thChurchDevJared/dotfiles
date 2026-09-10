@@ -1,0 +1,100 @@
+# Keep $PATH/$path free of duplicates (first occurrence wins). Without this,
+# nested shells and `exec zsh` re-prepend pyenv bin/shims and ~/.local/bin
+# every time, growing PATH and slowing command lookup.
+typeset -U path PATH fpath
+path=( $path )
+
+# Load plugins
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# Completion system (case-insensitive: lowercase input matches uppercase too)
+# Custom completion functions (uv/uvx, etc.) — must be on fpath before compinit.
+fpath=(~/.zsh/completions $fpath)
+# Run the slow security audit only when the dump is >24h old; otherwise load
+# the cached dump with -C (skips compaudit's stat-every-fpath-file pass).
+# NOTE: glob qualifiers do NOT expand inside [[ ]], so the old
+# `[[ -n ~/.zcompdump(#qN.mh+24) ]]` form was a non-empty literal string and
+# always took the slow branch. An array assignment does glob, so this works.
+autoload -Uz compinit
+_zdump=( ${ZDOTDIR:-$HOME}/.zcompdump(N.mh+24) )
+if (( $#_zdump )); then
+  compinit          # dump is stale: full audit + rewrite
+else
+  compinit -C       # dump is fresh: load it, skip compaudit
+fi
+unset _zdump
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+
+# Python (pyenv) — lazy-loaded for an instant prompt.
+# Put pyenv's bin + shims on PATH directly (cheap exports, ~0ms) so python, pip,
+# and uv (currently a pyenv shim) resolve immediately. The expensive part of
+# `pyenv init` — sourcing completions, defining the shell function, rehash
+# (~220ms total) — is deferred until the first actual `pyenv` invocation.
+export PYENV_ROOT="$HOME/.pyenv"
+export PYENV_SHELL=zsh
+export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
+pyenv() {
+  unset -f pyenv
+  eval "$(command pyenv init - zsh)"   # full init (incl. rehash), one time
+  pyenv "$@"
+}
+
+# uv: prefer it for envs/installs (uv venv, uv pip, uv run, uv tool install).
+# uv is itself fast and needs no shell init — just its cached completions above.
+
+# fzf
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+
+# Local bin
+export PATH="$HOME/.local/bin:$PATH"
+
+
+# Aliases
+alias docker='podman'
+
+# SAM CLI
+export SAM_CLI_CONTAINER_RUNTIME=podman
+
+# pnpm
+export PNPM_HOME="/Users/jmille935@cable.comcast.com/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+alias ls="eza --icons"
+alias ll="eza -la --icons"
+alias cat="bat --plain"
+alias find="fd"
+eval "$(zoxide init zsh)"
+
+HISTSIZE=10000
+SAVEHIST=10000
+HISTFILE=~/.zsh_history
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_SPACE    # commands starting with a space won't be saved
+setopt SHARE_HISTORY        # share history across terminal sessions
+
+setopt AUTO_CD              # type a directory name without cd to navigate to it
+alias zi="z --interactive"
+alias g="git"
+alias gs="git status"
+alias gd="git diff"
+alias gl="git log --oneline --graph --decorate"
+alias ..="cd .."
+alias ...="cd ../.."
+PROMPT='%~ # '
+
+# zsh-syntax-highlighting MUST be sourced last (it wraps the ZLE widgets)
+source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# --- Deep Work toggles (added by Claude 2026-08-10) --------------------------
+# `dw` = calm environment (dock hidden, desktop cleared, Ghostty up, + Focus/Slack
+# if the "Deep Work On" Shortcut exists). `dwoff` restores. Remove this block anytime.
+alias dw='~/.deepwork/on.sh'
+alias dwoff='~/.deepwork/off.sh'
+alias deepwork='~/.deepwork/on.sh'
+alias surface='~/.deepwork/off.sh'
+# ----------------------------------------------------------------------------

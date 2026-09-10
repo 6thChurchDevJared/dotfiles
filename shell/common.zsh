@@ -77,10 +77,22 @@ setopt HIST_IGNORE_SPACE    # commands starting with a space won't be saved
 setopt SHARE_HISTORY        # share history across terminal sessions
 
 # --- prompt ----------------------------------------------------------------
-# starship.toml is in the repo but starship is not installed and not initialised.
-# To switch: brew install starship, then replace the PROMPT line with
-#   eval "$(starship init zsh)"
-PROMPT='%~ # '
+# The Mac Mini drives the prompt: config/starship.toml is its 141-line "glass"
+# theme. Guarded so a machine without starship installed still gets a usable
+# prompt rather than an error on every shell.
+if command -v starship >/dev/null; then
+  eval "$(starship init zsh)"
+else
+  PROMPT='%~ # '   # brew install starship to get the real one
+fi
+
+# --- tools that need shell init -------------------------------------------
+# Present on the Mac Mini, absent on the MacBook Pro. Each is guarded, so this
+# block is a no-op on a machine that does not have the tool.
+command -v mise  >/dev/null && eval "$(mise activate zsh)"      # runtime versions
+command -v atuin >/dev/null && eval "$(atuin init zsh)"         # shell history
+command -v broot >/dev/null && [ -f ~/.config/broot/launcher/bash/br ] &&
+  source ~/.config/broot/launcher/bash/br
 
 # --- Deep Work toggles -----------------------------------------------------
 # `dw` = calm environment (dock hidden, desktop cleared, Ghostty up, + Focus/Slack

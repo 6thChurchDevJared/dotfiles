@@ -1,4 +1,38 @@
-# Personal Mac Mini only. `brew bundle --file=Brewfile.mini`
-# Seed this from the Mini with:  brew leaves > /tmp/mini-leaves.txt
-# Music production, personal dev, and anything else that should not land on a
-# work machine goes here.
+# Personal Mac Mini (khamul) only. `brew bundle --file=Brewfile.mini`
+# Generated from inventory/khamul-leaves.txt. Media tooling for music work plus
+# the wider oxide set the Mini runs.
+#
+# To adopt any of these on the MacBook Pro, move the line up into Brewfile and
+# run `brew bundle --file=Brewfile` there. Nothing here is work-specific.
+
+brew "atuin"   # shell history, syncable
+brew "bottom"   # top
+brew "broot"   # tree navigator
+brew "difftastic"   # structural diff
+brew "doggo"   # dig
+brew "duf"   # df
+brew "dust"   # du
+brew "ffmpeg"
+brew "git-lfs"   # large files
+brew "gitui"   # git TUI
+brew "gping"   # ping with a graph
+brew "grex"   # build regexes from examples
+brew "hexyl"   # hex viewer
+brew "hyperfine"   # benchmarking
+brew "imagemagick"
+brew "jless"   # jq-ish JSON pager
+brew "mise"   # runtime version manager
+brew "onefetch"   # repo summary
+brew "ouch"   # one command for every archive format
+brew "pastel"   # color inspection
+brew "poppler"
+brew "procs"   # ps
+brew "resvg"
+brew "sd"   # sed
+brew "sevenzip"
+brew "starship"   # prompt
+brew "tealdeer"   # tldr pages
+brew "tokei"   # count lines of code
+brew "viu"   # images in the terminal
+brew "xh"   # curl
+brew "yazi"   # file manager

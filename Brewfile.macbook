@@ -1,19 +1,20 @@
 # Work MacBook Pro only. `brew bundle --file=Brewfile.macbook`
-# Not installed on the Mac Mini unless a personal project needs it.
+# Python toolchain, AWS/Kubernetes/secrets, and build deps. See MACHINES.md.
 tap "mongodb/brew"
 
-# Python toolchain — see local/zshrc.local.macbook.example
+brew "apache-arrow"
+brew "aws-sam-cli"
+brew "cmake"
+brew "gh"
+brew "gopass"
+brew "helm"
+brew "lazygit"
+brew "llvm@21"
+brew "neovim"
+brew "ollama"
+brew "protobuf@33"
 brew "pyenv"
 brew "python@3.13"
-
-# AWS / Kubernetes / secrets
-brew "aws-sam-cli"
-brew "helm"
 brew "vault-cli"
-brew "gopass"
-
-# Build + data
-brew "cmake"
-brew "llvm@21"
-brew "apache-arrow"
-brew "protobuf@33"
+brew "wget"
+brew "zellij"

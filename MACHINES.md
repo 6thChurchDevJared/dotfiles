@@ -21,9 +21,33 @@ The Mini can use whatever it likes. If uv alone is enough there, its `~/.zshrc.l
 
 Credentials, and anything that stores them: `~/.config/gh/hosts.yml` (OAuth token), `~/.config/containers/auth.json` (registry logins), `~/.aws/`, `~/.kube/config`, `~/.ssh/`, `~/.config/gopass`. The `.gitignore` blocks these by name as a second line of defence. Configuration only.
 
+## What the first Mini reconciliation changed (2026-09-10)
+
+The Mini pushed a full rewrite of the Ghostty config — a "glass" theme with an explicit palette, 65% opacity, blur 26, and `adjust-cell-height`. That is the look now, on both machines.
+
+**It also silently dropped six things that are fixes rather than preferences**, so they were restored in a `## Function` section appended below the Mini's block (Ghostty takes the last value for single-value keys, so appending wins):
+
+| Restored | Why it is not optional |
+|---|---|
+| `grapheme-width-method = legacy` | The fix for Claude Code / TUI text overlap and ghosting on Ghostty 1.3+. Diagnosed the hard way; starship was the red herring |
+| `keybind = shift+enter=text:\n` | Claude Code newline instead of submit |
+| `shell-integration = zsh` + features | cursor shape, sudo askpass, window title |
+| `macos-option-as-alt = true` | readline word-jump |
+| `cmd+d` / `cmd+shift+d` / `cmd+w` | splits |
+
+**The rule this establishes:** the Mini drives appearance. It does not drive fixes. When a config is rewritten wholesale rather than edited, diff it for functional keys before adopting.
+
+`starship.toml` went from an 8-line stub to the Mini's 141-line glass theme, and the Mini actually has starship installed while the MacBook Pro does not. `common.zsh` now initialises starship **if it is present** and falls back to `PROMPT='%~ # '` otherwise, so neither machine errors.
+
+The Mini runs three other tools that need shell init and were missing from `common.zsh`: **mise** (runtime versions — this is the Mini's answer to pyenv), **atuin** (syncable shell history, rebinds Ctrl-R) and **broot**. All three are now initialised, each guarded by `command -v`, so the block is a no-op on the MacBook Pro.
+
+Package overlap is smaller than it looks: **7 formulae on both**, 16 MacBook-only, 31 Mini-only. `Brewfile` is now the true intersection plus starship; the rest are in the per-machine files. Adopting any Mini tool on the MacBook is one line moved into `Brewfile`.
+
+**Open decision:** `config/zed/settings.json` declares 31 `auto_install_extensions` taken from the MacBook, and the Mini has one (`html`). Linking it on the Mini installs all 31, including helm, kubernetes-snippets and terraform, which have no personal use. Harmless but untidy — split the list if it bothers you.
+
 ## Notes on the current state
 
-`starship.toml` is in the repo but starship is **not installed and not initialised** — the prompt is the literal `PROMPT='%~ # '` in `common.zsh`. Keep that in mind before debugging a prompt problem; on this machine starship has been a red herring before.
+On the MacBook Pro starship is still not installed, so the prompt falls back to `PROMPT='%~ # '`. `brew bundle --file=Brewfile` installs it.
 
 `~/.config/nvim` is a LazyVim starter that was cloned as its own git repo. The files are copied in here without their `.git`, so the repo owns them now.
 
