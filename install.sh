@@ -96,3 +96,14 @@ fi
 echo
 echo "done. Open a new shell, or: exec zsh"
 echo "Edit ~/.zshrc.local for anything specific to this machine."
+
+# Linking git/gitconfig replaces whatever identity was in ~/.gitconfig, and the
+# seeded ~/.gitconfig.local carries a placeholder. Left unedited, every commit
+# on this machine is authored you@example.com and nothing warns you.
+if grep -q 'you@example.com' "$HOME/.gitconfig.local" 2>/dev/null; then
+  echo
+  echo "  !! ~/.gitconfig.local still has the placeholder email."
+  echo "  !! Commits on this machine would be authored you@example.com."
+  echo "  !! Fix it now:"
+  echo "        git config --file ~/.gitconfig.local user.email 'you@real.address'"
+fi
