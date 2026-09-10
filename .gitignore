@@ -19,3 +19,8 @@ config/gh/
 config/gopass/
 config/containers/
 .DS_Store
+
+# SSH keys and host config never belong here (work infra hostnames live in ~/.ssh/config)
+.ssh/
+id_*
+*.pub
