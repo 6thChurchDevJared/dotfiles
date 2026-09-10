@@ -1,0 +1,16 @@
+# ---------------------------------------------------------------------------
+# Loader. Keep this thin; it exists to fix the ordering problem.
+#   1. shared config
+#   2. this machine's overrides (Python toolchain, container runtime, work paths)
+#   3. zsh-syntax-highlighting LAST, because it wraps the ZLE widgets and
+#      anything that defines widgets after it will not be highlighted.
+# ---------------------------------------------------------------------------
+DOTFILES="${DOTFILES:-$HOME/Developer/dotfiles}"
+
+source "$DOTFILES/shell/common.zsh"
+
+# Machine-local, never committed. Created by install.sh from local/*.example.
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local
+
+[ -f ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] &&
+  source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

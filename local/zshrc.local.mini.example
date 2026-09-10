@@ -1,0 +1,8 @@
+# ~/.zshrc.local on the personal Mac Mini. Never committed.
+# Start empty. Add only what is specific to this machine:
+#   - Python toolchain, if it differs from the MacBook Pro
+#   - container runtime (Docker Desktop rather than podman)
+#   - audio/music tooling paths
+#
+# If uv is the only Python you want here, nothing is needed: uv installs to
+# ~/.local/bin, which common.zsh already puts on PATH.

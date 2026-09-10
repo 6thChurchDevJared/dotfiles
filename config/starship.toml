@@ -1,0 +1,9 @@
+format = "$git_branch$character"
+
+[git_branch]
+format = "[$branch]($style) "
+style = "white"
+
+[character]
+success_symbol = "[#](bold white)"
+error_symbol = "[#](bold red)"

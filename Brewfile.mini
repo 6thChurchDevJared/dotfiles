@@ -1,0 +1,4 @@
+# Personal Mac Mini only. `brew bundle --file=Brewfile.mini`
+# Seed this from the Mini with:  brew leaves > /tmp/mini-leaves.txt
+# Music production, personal dev, and anything else that should not land on a
+# work machine goes here.

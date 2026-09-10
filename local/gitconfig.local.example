@@ -1,0 +1,4 @@
+# Copy to ~/.gitconfig.local and set the identity for THIS machine.
+[user]
+	name = Jared M
+	email = you@example.com

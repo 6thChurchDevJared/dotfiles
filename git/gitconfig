@@ -1,0 +1,14 @@
+# Shared git config. Identity lives in ~/.gitconfig.local because it differs
+# per machine (work email on the MacBook Pro, personal on the Mac Mini) and
+# committing the wrong one to a repo is annoying to undo.
+[include]
+	path = ~/.gitconfig.local
+
+# git-delta is installed via the Brewfile but not wired in. Uncomment to use it.
+# [core]
+# 	pager = delta
+# [interactive]
+# 	diffFilter = delta --color-only
+# [delta]
+# 	navigate = true
+# 	line-numbers = true

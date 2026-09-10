@@ -1,0 +1,12 @@
+# Homebrew environment — static equivalent of `eval "$(brew shellenv zsh)"`.
+# brew shellenv forks brew's wrapper (~45ms) on every login shell just to print
+# these lines, and its nested path_helper call is largely redundant because
+# /etc/paths.d/homebrew already puts /opt/homebrew/bin on PATH via
+# /etc/zprofile. Regenerate with `brew shellenv zsh` if Homebrew moves.
+# Apple Silicon prefix. On Intel this is /usr/local.
+export HOMEBREW_PREFIX="/opt/homebrew"
+export HOMEBREW_CELLAR="/opt/homebrew/Cellar"
+export HOMEBREW_REPOSITORY="/opt/homebrew"
+export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+export INFOPATH="/opt/homebrew/share/info:${INFOPATH:-}"
+fpath=(/opt/homebrew/share/zsh/site-functions $fpath)

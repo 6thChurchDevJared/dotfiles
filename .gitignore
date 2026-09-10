@@ -1,0 +1,21 @@
+# Machine-local overrides live in $HOME, never here. The examples in local/
+# are tracked; the real files are not.
+.zshrc.local
+.gitconfig.local
+*.bak
+*.bak.*
+
+# Anything that carries a credential. This repo is configuration only.
+# If a file below ever appears here, something has gone wrong.
+**/hosts.yml
+**/auth.json
+**/credentials
+**/*.pem
+**/*.key
+.netrc
+.npmrc
+.pypirc
+config/gh/
+config/gopass/
+config/containers/
+.DS_Store

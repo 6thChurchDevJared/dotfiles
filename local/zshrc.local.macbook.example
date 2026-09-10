@@ -1,0 +1,25 @@
+# ~/.zshrc.local on the work MacBook Pro. Never committed.
+# This file exists so the shared config can be driven from the Mac Mini
+# without disturbing the work Python toolchain.
+
+# --- Python (pyenv) --------------------------------------------------------
+# Lazy-loaded for an instant prompt. Put pyenv's bin + shims on PATH directly
+# (cheap exports, ~0ms) so python, pip and uv (currently a pyenv shim) resolve
+# immediately. The expensive part of `pyenv init` — sourcing completions,
+# defining the shell function, rehash (~220ms total) — is deferred until the
+# first actual `pyenv` invocation.
+export PYENV_ROOT="$HOME/.pyenv"
+export PYENV_SHELL=zsh
+export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
+pyenv() {
+  unset -f pyenv
+  eval "$(command pyenv init - zsh)"   # full init (incl. rehash), one time
+  pyenv "$@"
+}
+# uv: prefer it for envs/installs (uv venv, uv pip, uv run, uv tool install).
+# uv is itself fast and needs no shell init — just its cached completions.
+
+# --- Containers ------------------------------------------------------------
+# Comcast machines run podman, not Docker Desktop.
+alias docker='podman'
+export SAM_CLI_CONTAINER_RUNTIME=podman

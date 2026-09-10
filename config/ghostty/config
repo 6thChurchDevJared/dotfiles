@@ -1,0 +1,64 @@
+# Font
+# Victor Mono: tasteful coding font whose *italic* face is a connected cursive
+# (great for comments/keywords). Ghostty auto-falls-back to its bundled
+# "Symbols Nerd Font" for eza/bat icons, so no Nerd Font install is required.
+# Want native NF glyphs + ligatures? Run:  ! brew install --cask font-jetbrains-mono-nerd-font
+# then set:  font-family = JetBrainsMono Nerd Font
+font-family = JetBrainsMono Nerd Font
+font-size = 14
+# renders better on macOS retina
+font-thicken = true
+
+# Window
+window-padding-x = 12
+window-padding-y = 8
+macos-titlebar-style = tabs
+
+# Fix Claude Code / TUI text overlap & ghosting on Ghostty 1.3+.
+# Ghostty's default `unicode` width method desyncs the cursor against
+# apps that measure with wcswidth (Claude Code's Ink renderer). `legacy`
+# uses POSIX wcswidth tables and aligns the two. See Ghostty option ref.
+grapheme-width-method = legacy
+
+# Appearance
+# Kanagawa Wave: warm, muted ink palette (Hokusai-inspired) — easier on the
+# eyes than Dracula+'s high-saturation purple over long sessions. Swap to
+# "TokyoNight Moon", "Catppuccin Mocha", or "Gruvbox Dark Hard" if you prefer.
+theme = Kanagawa Wave
+# Match the terminal background to the desktop wallpaper (#071317) so it blends.
+# This line is AFTER `theme` on purpose — an explicit `background` overrides the
+# theme's background. Lower background-opacity to let more wallpaper show through.
+background = #071317
+background-opacity = 0.75
+background-blur = 10
+
+# Cursor
+cursor-style = bar
+cursor-style-blink = false
+
+# Scrollback — value is in BYTES (100 MB). Ghostty default is 10 MB.
+scrollback-limit = 100000000
+
+# Shell integration
+shell-integration = zsh
+shell-integration-features = cursor,sudo,title
+
+# macOS: make Option send Meta (readline word-jump, alt keybinds)
+macos-option-as-alt = true
+
+# Claude Code: Shift+Enter inserts a newline instead of submitting
+keybind = shift+enter=text:\n
+
+# Splits
+keybind = cmd+d=new_split:right
+keybind = cmd+shift+d=new_split:down
+keybind = cmd+w=close_surface
+
+# Startup window state
+# Open every new Ghostty window maximized (fills the screen, keeps the menu bar
+# and Dock — not true fullscreen / no separate Space). Available since 1.1.0.
+maximize = true
+# Don't restore the previous session's window frame at launch, which would
+# otherwise win over `maximize` and reopen at the old size. Remove this line if
+# you'd rather have Ghostty restore your last window geometry/tabs.
+window-save-state = never

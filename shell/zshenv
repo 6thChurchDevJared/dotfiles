@@ -1,0 +1,2 @@
+# Rust toolchain, if rustup installed it.
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
