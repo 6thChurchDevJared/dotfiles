@@ -9,3 +9,7 @@ brew "git-delta"   # diff pager
 brew "ripgrep"   # grep
 brew "zoxide"   # cd
 brew "starship"   # prompt; config/starship.toml is the Mini's glass theme
+
+# Fonts (both machines: Ghostty and Obsidian read the same names)
+cask "font-jetbrains-mono-nerd-font"   # code; Ghostty font-family
+cask "font-inter"                      # prose and UI; pairs with JetBrains Mono
