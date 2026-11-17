@@ -4,16 +4,19 @@
 #
 #   ./install.sh              link everything, then report
 #   ./install.sh --dry-run    show what would happen, touch nothing
-#   ./install.sh --brew       also run brew bundle for this machine
+#   ./install.sh --packages   also install packages: brew bundle on macOS,
+#                             packages/linux.sh on Debian-family Linux
+#                             (--brew is the old name, still accepted)
 set -euo pipefail
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 STAMP="$(date +%Y%m%d%H%M%S)"
-DRY=0; BREW=0
+DRY=0; PKGS=0
+OS="$(uname -s)"   # Darwin | Linux
 for a in "$@"; do
   case "$a" in
     --dry-run) DRY=1 ;;
-    --brew)    BREW=1 ;;
+    --packages|--brew) PKGS=1 ;;
     *) echo "unknown flag: $a" >&2; exit 2 ;;
   esac
 done
@@ -44,7 +47,7 @@ seed() {  # seed <repo example> <absolute target>   (copy, never overwrite)
   say "seed  $dst (edit it, it is not tracked)"
 }
 
-echo "dotfiles: $DOTFILES"
+echo "dotfiles: $DOTFILES ($OS)"
 [ "$DRY" = 1 ] && echo "DRY RUN — nothing will be changed"
 
 echo; echo "shell:"
@@ -63,15 +66,22 @@ link config/zellij/config.kdl "$HOME/.config/zellij/config.kdl"
 link config/starship.toml   "$HOME/.config/starship.toml"
 link config/nvim            "$HOME/.config/nvim"
 
-echo; echo "scripts:"
-run mkdir -p "$HOME/.deepwork"
-for s in on.sh off.sh; do link "bin/$s" "$HOME/.deepwork/$s"; done
+# bin/ needs no links: common.zsh puts $DOTFILES/bin on PATH.
+if [ "$OS" = Darwin ]; then
+  echo; echo "deep work (macOS):"
+  run mkdir -p "$HOME/.deepwork"
+  for s in on.sh off.sh; do link "deepwork/$s" "$HOME/.deepwork/$s"; done
+fi
 
 echo; echo "machine-local (not tracked):"
-case "$(scutil --get ComputerName 2>/dev/null || hostname)" in
-  *[Mm]ini*) seed local/zshrc.local.mini.example    "$HOME/.zshrc.local" ;;
-  *)         seed local/zshrc.local.macbook.example "$HOME/.zshrc.local" ;;
-esac
+machine() {  # macbook | mini | linux
+  if [ "$OS" = Linux ]; then echo linux; return; fi
+  case "$(scutil --get ComputerName 2>/dev/null || hostname)" in
+    *[Mm]ini*) echo mini ;;
+    *)         echo macbook ;;
+  esac
+}
+seed "local/zshrc.local.$(machine).example" "$HOME/.zshrc.local"
 seed local/gitconfig.local.example "$HOME/.gitconfig.local"
 
 echo; echo "zsh plugins:"
@@ -84,12 +94,15 @@ for p in zsh-autosuggestions zsh-syntax-highlighting; do
 done
 run mkdir -p "$HOME/.zsh/completions"
 
-if [ "$BREW" = 1 ]; then
-  echo; echo "brew:"
-  run brew bundle --file="$DOTFILES/Brewfile"
-  case "$(scutil --get ComputerName 2>/dev/null || hostname)" in
-    *[Mm]ini*) [ -s "$DOTFILES/Brewfile.mini" ] && run brew bundle --file="$DOTFILES/Brewfile.mini" ;;
-    *)         run brew bundle --file="$DOTFILES/Brewfile.macbook" ;;
+if [ "$PKGS" = 1 ]; then
+  echo; echo "packages:"
+  case "$(machine)" in
+    linux)   if [ "$DRY" = 1 ]; then "$DOTFILES/packages/linux.sh" --dry-run
+             else "$DOTFILES/packages/linux.sh"; fi ;;
+    mini)    run brew bundle --file="$DOTFILES/Brewfile"
+             [ -s "$DOTFILES/Brewfile.mini" ] && run brew bundle --file="$DOTFILES/Brewfile.mini" ;;
+    macbook) run brew bundle --file="$DOTFILES/Brewfile"
+             run brew bundle --file="$DOTFILES/Brewfile.macbook" ;;
   esac
 fi
 

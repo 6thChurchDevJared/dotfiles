@@ -8,16 +8,13 @@ brew "cmake"
 brew "gh"
 brew "gopass"
 brew "helm"
-brew "lazygit"
 brew "llvm@21"
-brew "neovim"
 brew "ollama"
 brew "protobuf@33"
 brew "pyenv"
 brew "python@3.13"
 brew "vault-cli"
 brew "wget"
-brew "zellij"
 
 # Installed but absent from `brew leaves`, so add them by hand.
 #
