@@ -4,11 +4,17 @@
 [include]
 	path = ~/.gitconfig.local
 
-# git-delta is installed via the Brewfile but not wired in. Uncomment to use it.
-# [core]
-# 	pager = delta
-# [interactive]
-# 	diffFilter = delta --color-only
-# [delta]
-# 	navigate = true
-# 	line-numbers = true
+# delta as the pager, falling back to less (and to cat for `add -p`) on a box
+# where delta is not installed yet. A bare `pager = delta` there breaks every
+# paged git command. git runs both values through sh, so the guard works.
+[core]
+	pager = command -v delta >/dev/null 2>&1 && exec delta || exec less
+[interactive]
+	diffFilter = command -v delta >/dev/null 2>&1 && exec delta --color-only || exec cat
+[delta]
+	navigate = true        # n / N jump between files in a diff
+	line-numbers = true
+[merge]
+	conflictStyle = zdiff3
+[diff]
+	colorMoved = default
