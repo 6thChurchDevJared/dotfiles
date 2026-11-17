@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# newscript - create an executable script from a template and open it in $EDITOR.
+#
+# Usage: newscript [-h] [--here] NAME[.py]
+#
+#   NAME        bash script (default)
+#   NAME.py     Python script run by `uv run --script`, deps declared inline;
+#               the .py is dropped from the file name so you call it as NAME
+#   --here      create it in the current directory instead of $DOTFILES/bin
+#
+# Scripts in $DOTFILES/bin are on PATH on every machine and versioned with the
+# dotfiles, so commit them. Templates live in $DOTFILES/templates.
+set -euo pipefail
+
+DOTFILES="${DOTFILES:-$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)}"
+
+usage() { sed -n '2,/^set /{/^set /d;s/^# \{0,1\}//;p;}' "$0"; }
+die() {
+  printf '%s: %s\n' "${0##*/}" "$*" >&2
+  exit 1
+}
+
+main() {
+  local dir="$DOTFILES/bin" name="" kind=sh
+  while (($#)); do
+    case "$1" in
+      -h | --help)
+        usage
+        exit 0
+        ;;
+      --here) dir="$PWD" ;;
+      -*) die "unknown flag: $1" ;;
+      *) name="$1" ;;
+    esac
+    shift
+  done
+  [[ -n $name ]] || {
+    usage >&2
+    exit 2
+  }
+  if [[ $name == *.py ]]; then
+    kind=py
+    name="${name%.py}"
+  fi
+  [[ $name =~ ^[A-Za-z0-9._-]+$ ]] || die "name may only use letters, digits, . _ -"
+
+  local target="$dir/$name"
+  [[ -e $target ]] && die "$target already exists"
+  command -v "$name" >/dev/null 2>&1 &&
+    printf 'warning: %s already resolves to %s; yours will shadow it\n' \
+      "$name" "$(command -v "$name")" >&2
+
+  sed "s/__NAME__/$name/g" "$DOTFILES/templates/script.$kind" >"$target"
+  chmod +x "$target"
+  printf 'created %s\n' "$target"
+  exec "${EDITOR:-vi}" "$target"
+}
+
+main "$@"
