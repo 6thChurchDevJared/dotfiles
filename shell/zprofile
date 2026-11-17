@@ -1,12 +1,22 @@
-# Homebrew environment — static equivalent of `eval "$(brew shellenv zsh)"`.
+# Homebrew environment, static equivalent of `eval "$(brew shellenv zsh)"`.
 # brew shellenv forks brew's wrapper (~45ms) on every login shell just to print
-# these lines, and its nested path_helper call is largely redundant because
-# /etc/paths.d/homebrew already puts /opt/homebrew/bin on PATH via
-# /etc/zprofile. Regenerate with `brew shellenv zsh` if Homebrew moves.
-# Apple Silicon prefix. On Intel this is /usr/local.
-export HOMEBREW_PREFIX="/opt/homebrew"
-export HOMEBREW_CELLAR="/opt/homebrew/Cellar"
-export HOMEBREW_REPOSITORY="/opt/homebrew"
-export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
-export INFOPATH="/opt/homebrew/share/info:${INFOPATH:-}"
-fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
+# these lines. Checks the three standard prefixes and does nothing on a machine
+# without Homebrew (a Raspberry Pi or Proxmox guest using apt).
+#   /opt/homebrew               Apple Silicon
+#   /usr/local                  Intel Mac (repository in /usr/local/Homebrew)
+#   /home/linuxbrew/.linuxbrew  Homebrew on Linux, if ever installed
+for _p in /opt/homebrew /usr/local /home/linuxbrew/.linuxbrew; do
+  [ -x "$_p/bin/brew" ] || continue
+  export HOMEBREW_PREFIX="$_p"
+  export HOMEBREW_CELLAR="$_p/Cellar"
+  if [ -d "$_p/Homebrew" ]; then
+    export HOMEBREW_REPOSITORY="$_p/Homebrew"
+  else
+    export HOMEBREW_REPOSITORY="$_p"
+  fi
+  export PATH="$_p/bin:$_p/sbin:$PATH"
+  export INFOPATH="$_p/share/info:${INFOPATH:-}"
+  fpath=("$_p/share/zsh/site-functions" $fpath)
+  break
+done
+unset _p

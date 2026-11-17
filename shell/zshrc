@@ -5,7 +5,9 @@
 #   3. zsh-syntax-highlighting LAST, because it wraps the ZLE widgets and
 #      anything that defines widgets after it will not be highlighted.
 # ---------------------------------------------------------------------------
-DOTFILES="${DOTFILES:-$HOME/Developer/dotfiles}"
+# Repo root, from this file's real path (~/.zshrc is a symlink into the repo),
+# so the clone can live anywhere. Exported for bin/ scripts.
+export DOTFILES="${DOTFILES:-${${(%):-%x}:A:h:h}}"
 
 source "$DOTFILES/shell/common.zsh"
 

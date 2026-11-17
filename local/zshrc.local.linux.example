@@ -1,0 +1,8 @@
+# ~/.zshrc.local on a Linux box (Raspberry Pi, Proxmox guest). Never committed.
+# Start empty. Add only what is specific to this machine, e.g.:
+#   - container runtime (docker vs podman)
+#   - a hostname-coloured prompt override, so ssh sessions are obvious
+#   - paths for whatever this box serves (game servers, homelab tooling)
+#
+# uv, nvim and zellij come from packages/linux.sh into ~/.local/bin, which
+# common.zsh already puts on PATH.
