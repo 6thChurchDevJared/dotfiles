@@ -17,6 +17,14 @@ The Mini can use whatever it likes. If uv alone is enough there, its `~/.zshrc.l
 | AWS / Kubernetes / Vault / gopass | installed | not wanted | `Brewfile.macbook` |
 | music production | none | to be filled in | `Brewfile.mini` |
 
+## Linux boxes (Raspberry Pi 4, Proxmox guests)
+
+Same `common.zsh`, `gitconfig` and `config/`; nothing in the shared files branches on hostname, only on `$OSTYPE` or on whether a command exists. Packages come from `packages/linux.sh` instead of a Brewfile: apt where Debian's package exists, the latest GitHub release into `~/.local` otherwise. Neovim always comes from GitHub because LazyVim requires >= 0.11.2 and Debian 13 ships 0.10.4. zellij and uv are not packaged at all. On Debian 12 (bookworm) eza, delta, starship and lazygit also come from GitHub, and the apt ripgrep/fzf/zoxide are old but work.
+
+Debian names two tools differently (`batcat`, `fdfind`). `linux.sh` links the real names into `~/.local/bin`, and `common.zsh` aliases them if it has not run.
+
+Install into a Proxmox **guest** (LXC or VM), not the Proxmox host itself: the host is an appliance and should stay close to stock.
+
 ## Things deliberately not in this repo
 
 Credentials, and anything that stores them: `~/.config/gh/hosts.yml` (OAuth token), `~/.config/containers/auth.json` (registry logins), `~/.aws/`, `~/.kube/config`, `~/.ssh/`, `~/.config/gopass`. The `.gitignore` blocks these by name as a second line of defence. Configuration only.
@@ -47,10 +55,8 @@ Package overlap is smaller than it looks: **7 formulae on both**, 16 MacBook-onl
 
 ## Notes on the current state
 
-On the MacBook Pro starship is still not installed, so the prompt falls back to `PROMPT='%~ # '`. `brew bundle --file=Brewfile` installs it.
-
 `~/.config/nvim` is a LazyVim starter that was cloned as its own git repo. The files are copied in here without their `.git`, so the repo owns them now.
 
-`~/.cargo/bin` is empty. Every "rust replacement" (eza, bat, fd, ripgrep, zoxide, delta, zellij) came from Homebrew, so the `Brewfile` is the whole install story. Rust itself is installed via rustup and `~/.zshenv` sources its env if present.
+`~/.cargo/bin` is empty. Every "rust replacement" (eza, bat, fd, ripgrep, zoxide, delta, zellij) comes from Homebrew on macOS and from `packages/linux.sh` on Linux; nothing is built with cargo. Rust itself is installed via rustup and `~/.zshenv` sources its env if present.
 
 Zed's 32 extensions are not installed by `install.sh`; they are declared in `config/zed/settings.json` under `auto_install_extensions`, which Zed acts on at startup.

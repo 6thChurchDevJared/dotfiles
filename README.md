@@ -1,6 +1,6 @@
 # dotfiles
 
-Shell, terminal and editor configuration for two machines: a work MacBook Pro and a personal Mac Mini.
+Shell, terminal and editor configuration for a work MacBook Pro, a personal Mac Mini, and Debian-family Linux boxes (Raspberry Pi 4, Proxmox guests). One config on all of them; only package installation differs by OS.
 
 **The Mac Mini drives.** For anything shared, the Mini is the source of truth and the MacBook Pro follows. The one thing the Mini must never disturb is the MacBook's Python toolchain, so that lives in an untracked machine-local file. See [MACHINES.md](MACHINES.md).
 
@@ -9,13 +9,16 @@ Shell, terminal and editor configuration for two machines: a work MacBook Pro an
 ```
 shell/common.zsh    shared: aliases, history, completion, oxide tools
 shell/zshrc         thin loader: common -> ~/.zshrc.local -> syntax highlighting
-shell/zprofile      Homebrew env (static, avoids the 45ms brew shellenv fork)
+shell/zprofile      Homebrew env if present (static, avoids the 45ms brew shellenv fork)
 shell/zshenv        rust env, if rustup is installed
 git/gitconfig       shared; identity is included from ~/.gitconfig.local
 config/             ghostty, zed, zellij, nvim, starship
-bin/                deep-work toggles
+bin/                your scripts, on PATH everywhere; `newscript` makes new ones
+templates/          script templates newscript copies (bash, uv Python)
+deepwork/           macOS deep-work toggles, linked into ~/.deepwork
 local/*.example     templates for the untracked machine-local files
-Brewfile            shared packages
+Brewfile            shared packages (macOS)
+packages/linux.sh   the same toolset on Debian/Pi OS/Ubuntu: apt + GitHub releases
 Brewfile.macbook    work-only (pyenv, aws-sam-cli, helm, vault, gopass, llvm)
 Brewfile.mini       personal-only (music production etc., to be filled in)
 inventory/          `brew leaves` and Zed extensions per machine, for diffing
@@ -29,11 +32,20 @@ collect.sh          pull this machine's live configs back into the repo
 git clone <repo-url> ~/Developer/dotfiles
 cd ~/Developer/dotfiles
 ./install.sh --dry-run     # read this first
-./install.sh --brew
+./install.sh --packages    # brew bundle on macOS, packages/linux.sh on Linux
 exec zsh
 ```
 
+On Linux, clone anywhere (the shell finds the repo from the `~/.zshrc` symlink), then `chsh -s "$(command -v zsh)"`. Re-run `packages/linux.sh` to update the Linux tools; on macOS it is `brew upgrade`. Use the 64-bit Raspberry Pi OS image: the script refuses 32-bit ARM, and the Trixie-based release gets far newer packages than Bookworm.
+
 `install.sh` is idempotent and never destroys anything: an existing real file is moved to `<name>.bak.<timestamp>` before the symlink is made. It also seeds `~/.zshrc.local` and `~/.gitconfig.local` from `local/` if they do not exist, and clones the two zsh plugins.
+
+## Vim workflow
+
+- **Shell** is in vi mode. `Esc` for normal mode (block cursor), `v` there opens the command line in nvim. `Ctrl-A/E/W/U` still work in insert mode.
+- **Editor** is nvim (LazyVim) for `$EDITOR`, `vi`, `vim` and man pages. First launch installs plugins and LSP servers. Start with `:Tutor`. Language extras are in `config/nvim/lazyvim.json`, add more with `:LazyExtras`.
+- **Panes** are zellij, unlock-first: it starts locked so every key reaches nvim. `Alt h/j/k/l` moves between panes, `Alt n` new pane, `Alt f` floating pane. `Ctrl g` is the leader: then `p` pane, `t` tab, `n` resize, `m` move, `s` scroll/search, `o` session. Inside nvim, `Ctrl h/j/k/l` moves between nvim splits.
+- **Scripts**: `newscript name` (bash) or `newscript name.py` (uv inline-deps Python) creates `bin/name`, executable and on PATH, and opens it. Commit it and it is on every machine. `--here` creates it in the current directory instead.
 
 ## Reconcile the two machines
 
