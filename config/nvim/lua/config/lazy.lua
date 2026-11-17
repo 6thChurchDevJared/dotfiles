@@ -45,7 +45,7 @@ require("lazy").setup({
         -- "netrwPlugin",
         "tarPlugin",
         "tohtml",
-        "tutor",
+        -- "tutor", -- kept: :Tutor is the 30-minute vim intro
         "zipPlugin",
       },
     },
